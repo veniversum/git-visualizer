@@ -119,6 +119,15 @@
           };
           update();
         });
+      } else if ($('input#owner').val() == "Microsoft" && $('input#repo').val() == "CNTK") {
+        d3.json("/data/CNTK.json", function (error, json) {
+          if (error) return console.warn(error);
+          root = {
+            "name": "root",
+            "children": json
+          };
+          update();
+        });
       } else {
         var json = getRepo($('input#owner').val(), $('input#repo').val());
         root = {
