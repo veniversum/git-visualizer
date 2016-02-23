@@ -8,7 +8,7 @@ Files are displayed as a directed graph, color coded based on file types, and si
 Replace your own GitHub personal token key into `/js/github.js`. Serve static `index.html` on webserver of your choice.
 
 ## License
-[GPL v2](LICENSE.MD)
+[GPL v2](LICENSE.md)
 
 ## Others
 Created at StacsHack 2016
