@@ -1,56 +1,112 @@
 html,
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-weight: 300;
-    }
-    
-    b {
-      font-weight: 900;
-    }
-    
-    .outline {
-      fill: none;
-      stroke: #888888;
-      stroke-width: 1px;
-    }
-    
-    .highlight {
-      stroke: red;
-      stroke-weight: 4px;
-      stroke-opacity: 1.0;
-    }
-    
-    .node {
-      cursor: pointer;
-      stroke: #3182bd;
-      stroke-width: 1.5px;
-    }
-    
-    .link {
-      fill: none;
-      stroke: #9ecae1;
-      stroke-width: 1.5px;
-    }
-    
-    #tooltip {
-      font-size: 10pt;
-      font-weight: 900;
-      z-index: : 999;
-      fill: #000000;
-      stroke: #ffffff;
-      stroke-width: 0.25px;
-    }
-    
-    .tipsy-inner {
-      padding: 0px;
-    }
-    
-    .tipsy {
-      font-size: 12px;
-    }
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Raleway', 'Helvetica', sans-serif;
+  font-weight: 300;
+}
+
+#header {
+  height: 100vh;
+  position: relative;
+  text-align: center
+}
+
+header {
+  position: fixed;
+  height: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0px;
+  width: 100%;
+  opacity: 0.8;
+}
+
+h1 {
+  font-size: 3em;
+  line-height: 1.25em;
+  margin: 0;
+}
+
+img#logo {
+  opacity: 0.7;
+  /*filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);*/
+}
+
+p {
+  font-weight: 700;
+  font-size: 15pt;
+  margin: 1.5em 0 0 0;
+}
+
+#prompt {
+  position: absolute;
+  top: 0;
+  margin: 10px
+}
+
+form.start {
+  -webkit-animation: glow 1.5s ease-in-out infinite alternate;
+  -moz-animation: glow 1.5s ease-in-out infinite alternate;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+  from {
+    box-shadow: 0 0 10px #fff, 0 0 10px #B6FF00, 0 0 15px #B6FF00;
+  }
+  to {
+    box-shadow: 0 0 5px #fff, 0 0 1px #B6FF00, 0 0 5px #B6FF00;
+  }
+}
+
+b {
+  font-weight: 900;
+}
+
+.outline {
+  fill: none;
+  stroke: #888888;
+  stroke-width: 1px;
+}
+
+.highlight {
+  stroke: red;
+  stroke-weight: 4px;
+  stroke-opacity: 1.0;
+}
+
+.node {
+  cursor: pointer;
+  stroke: #3182bd;
+  stroke-width: 1.5px;
+}
+
+.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+
+#tooltip {
+  font-size: 10pt;
+  font-weight: 900;
+  z-index: : 999;
+  fill: #000000;
+  stroke: #ffffff;
+  stroke-width: 0.25px;
+}
+
+.tipsy-inner {
+  padding: 0px;
+}
+
+.tipsy {
+  font-size: 12px;
+}
+
 
 /*!
  * "Fork me on GitHub" CSS ribbon v0.2.0 | MIT License
@@ -75,16 +131,15 @@ html,
   position: fixed;
 }
 
-.github-fork-ribbon:before, .github-fork-ribbon:after {
+.github-fork-ribbon:before,
+.github-fork-ribbon:after {
   /* The right and left classes determine the side we attach our banner to */
   position: absolute;
   display: block;
   width: 15.38em;
   height: 1.54em;
-  
   top: 3.23em;
   right: -3.23em;
-  
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -94,13 +149,10 @@ html,
 
 .github-fork-ribbon:before {
   content: "";
-
   /* Add a bit of padding to give some substance outside the "stitching" */
   padding: .38em 0;
-
   /* Set the base colour */
   background-color: #333;
-
   /* Set a gradient: transparent black at the top to almost-transparent black at the bottom */
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.15)));
   background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
@@ -108,19 +160,16 @@ html,
   background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
   background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
-
   /* Add a drop shadow */
   -webkit-box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
   box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
-
   pointer-events: auto;
 }
 
 .github-fork-ribbon:after {
   /* Set the text from the title attribute */
   content: attr(title);
-
   /* Set the text properties */
   color: #fff;
   font: 700 1em "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -129,11 +178,9 @@ html,
   text-shadow: 0 -.08em rgba(0, 0, 0, 0.5);
   text-align: center;
   text-indent: 0;
-
   /* Set the layout properties */
   padding: .15em 0;
   margin: .15em 0;
-
   /* Add "stitching" effect */
   border-width: .08em 0;
   border-style: dotted;
@@ -141,27 +188,38 @@ html,
   border-color: rgba(255, 255, 255, 0.7);
 }
 
-.github-fork-ribbon.left-top, .github-fork-ribbon.left-bottom {
+.github-fork-ribbon.left-top,
+.github-fork-ribbon.left-bottom {
   right: auto;
   left: 0;
 }
 
-.github-fork-ribbon.left-bottom, .github-fork-ribbon.right-bottom {
+.github-fork-ribbon.left-bottom,
+.github-fork-ribbon.right-bottom {
   top: auto;
   bottom: 0;
 }
 
-.github-fork-ribbon.left-top:before, .github-fork-ribbon.left-top:after, .github-fork-ribbon.left-bottom:before, .github-fork-ribbon.left-bottom:after {
+.github-fork-ribbon.left-top:before,
+.github-fork-ribbon.left-top:after,
+.github-fork-ribbon.left-bottom:before,
+.github-fork-ribbon.left-bottom:after {
   right: auto;
   left: -3.23em;
 }
 
-.github-fork-ribbon.left-bottom:before, .github-fork-ribbon.left-bottom:after, .github-fork-ribbon.right-bottom:before, .github-fork-ribbon.right-bottom:after {
+.github-fork-ribbon.left-bottom:before,
+.github-fork-ribbon.left-bottom:after,
+.github-fork-ribbon.right-bottom:before,
+.github-fork-ribbon.right-bottom:after {
   top: auto;
   bottom: 3.23em;
 }
 
-.github-fork-ribbon.left-top:before, .github-fork-ribbon.left-top:after, .github-fork-ribbon.right-bottom:before, .github-fork-ribbon.right-bottom:after {
+.github-fork-ribbon.left-top:before,
+.github-fork-ribbon.left-top:after,
+.github-fork-ribbon.right-bottom:before,
+.github-fork-ribbon.right-bottom:after {
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
   -ms-transform: rotate(-45deg);

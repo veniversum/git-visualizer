@@ -13,9 +13,18 @@
 </head>
 
 <body>
-  <div style="position:absolute; margin:5px" id="prompt">
-    <form id="signup-form" action="javascript:getRepo()">
-      <input type="text" name="owner" id="owner" placeholder="Username" />
+  <div id="graph"></div>
+  <section id="header">
+    <header>
+      <img id="logo" src="images/logo.png" />
+      <p>Enter a GitHub user/organization name and repository and hit Go! (Try atom/atom) </br>
+        Scroll to zoom, click and drag to pan.
+      </p>
+    </header>
+  </section>
+  <div id="prompt">
+    <form class="start" id="signup-form" action="javascript:getRepo()">
+      <input type="text" name="owner" id="owner" placeholder="User/Organization" />
       <input type="text" name="repo" id="repo" placeholder="Repository" />
       <input type="submit" value="Go!" />
     </form>

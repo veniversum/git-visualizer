@@ -16,6 +16,10 @@ function getRepo() {
       access_token: access_token
     },
     success: function (data) {
+      $('header').show();
+      $('form.start').removeClass('start');
+      $('header p').remove();
+      $('img#logo').attr('src', 'images/hex-loader.gif')
       var sha = data[0].sha,
         url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token;
       init(url);
@@ -35,7 +39,7 @@ var force = d3.layout.force()
   })
   .on("tick", tick);
 
-var outer = d3.select("body").append("svg")
+var outer = d3.select("div#graph").append("svg")
   .call(d3.behavior.zoom().on("zoom", rescale))
   .on("dblclick.zoom", null)
   .attr("width", width)
@@ -63,6 +67,7 @@ function init(url) {
     if (error) {
       return console.warn(error);
     }
+    $('header').hide();
     json.tree.forEach(function (o) {
       var indexSlash = o.path.lastIndexOf('/');
       if (indexSlash < 0) {
@@ -198,7 +203,7 @@ function update() {
     .enter().append("g")
     .attr("class", "legend")
     .attr("transform", function (d, i) {
-      return "translate(-5," + (i * 20 + 5) + ")";
+      return "translate(-10," + (i * 20 + 10) + ")";
     });
 
   legend.append("rect")
