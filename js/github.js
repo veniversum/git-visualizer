@@ -1,4 +1,4 @@
-var access_token = ['f1aff3072a385154ffe18aed3b893aa46ce8577c','2e71ec1017dda2220ccba0f6922ecefd9ea44ac7','bfaeb43c92d3e2f534745a6df977f68b64dc7c55','7731a6f681df209067f597a04822c7abf0425c9a','b59d67cf0ba63a89b87ebad75d4ec1e08d9f2e43','daf69c16bec62f7c2faf5e5a7f445a4823f2f531'];
+var access_token = ['f1aff3072a385154ffe18aed3b893aa46ce8577c', '2e71ec1017dda2220ccba0f6922ecefd9ea44ac7', 'bfaeb43c92d3e2f534745a6df977f68b64dc7c55', '7731a6f681df209067f597a04822c7abf0425c9a', 'b59d67cf0ba63a89b87ebad75d4ec1e08d9f2e43', 'daf69c16bec62f7c2faf5e5a7f445a4823f2f531'];
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -8,7 +8,11 @@ var root;
 var treeData = [];
 
 function checkQuery() {
-  if (fromQuery('owner') && fromQuery('repo')) getRepo();
+  if (fromQuery('owner') && fromQuery('repo')) {
+    $('input#owner').val(fromQuery('owner'));
+    $('input#repo').val(fromQuery('repo'));
+    getRepo();
+  }
 }
 
 function fromQuery(value) {
@@ -23,12 +27,12 @@ function fromQuery(value) {
 }
 
 function getRepo() {
-  var owner = fromQuery('owner') || $('input#owner').val(),
-      repo = fromQuery('repo') || $('input#repo').val();
+  var owner = $('input#owner').val(),
+    repo = $('input#repo').val();
   $.ajax({
     url: "https://api.github.com/repos/" + owner + "/" + repo + "/commits",
     data: {
-      access_token: access_token[Math.floor(Math.random()*access_token.length)]
+      access_token: access_token[Math.floor(Math.random() * access_token.length)]
     },
     success: function (data) {
       $('header').show();
@@ -36,7 +40,7 @@ function getRepo() {
       $('header p').remove();
       $('img#logo').attr('src', 'images/hex-loader.gif')
       var sha = data[0].sha,
-        url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token[Math.floor(Math.random()*access_token.length)];
+        url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token[Math.floor(Math.random() * access_token.length)];
       init(url);
     }
   });
@@ -188,19 +192,19 @@ function update() {
     .on('mouseover', function (d) {
       var ancestors = listAncestors(d);
       link.style('stroke-width', function (l) {
-        if (ancestors.indexOf(l.target.name) >= 0)
+        if (ancestors && ancestors.indexOf(l.target.name) >= 0)
           return 4;
         else
           return 2;
       });
       link.style('stroke', function (l) {
-        if (ancestors.indexOf(l.target.name) >= 0)
+        if (ancestors && ancestors.indexOf(l.target.name) >= 0)
           return "#ff8080";
         else
           return '#9ecae1';
       });
       node.style('stroke', function (n) {
-        if (ancestors.indexOf(n.name) >= 0)
+        if (ancestors && ancestors.indexOf(n.name) >= 0)
           return "#ff8080";
         else
           return '#3182bd';
