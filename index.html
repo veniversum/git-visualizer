@@ -9,69 +9,19 @@
   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tipsy/1.0.2/jquery.tipsy.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tipsy/1.0.2/jquery.tipsy.css" rel="stylesheet" type="text/css" />
-
-  <style>
-    body {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-weight: 300;
-    }
-    
-    b {
-      font-weight: 900;
-    }
-    
-    .outline {
-      fill: none;
-      stroke: #888888;
-      stroke-width: 1px;
-    }
-    
-    .highlight {
-      stroke: red;
-      stroke-weight: 4px;
-      stroke-opacity: 1.0;
-    }
-    
-    .node {
-      cursor: pointer;
-      stroke: #3182bd;
-      stroke-width: 1.5px;
-    }
-    
-    .link {
-      fill: none;
-      stroke: #9ecae1;
-      stroke-width: 1.5px;
-    }
-    
-    #tooltip {
-      font-size: 10pt;
-      font-weight: 900;
-      z-index: : 999;
-      fill: #000000;
-      stroke: #ffffff;
-      stroke-width: 0.25px;
-    }
-    
-    .tipsy-inner {
-      padding: 1px 2px 1px 2px;
-    }
-    
-    .tipsy {
-      font-size: 12px;
-    }
-  </style>
+  <link href="/css/main.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-  <div style="position:absolute" id="prompt">
-    <form id="signup-form" action="javascript:init()">
+  <div style="position:absolute; margin:5px" id="prompt">
+    <form id="signup-form" action="javascript:getRepo()">
       <input type="text" name="owner" id="owner" placeholder="Username" />
       <input type="text" name="repo" id="repo" placeholder="Repository" />
       <input type="submit" value="Go!" />
     </form>
   </div>
-  <script src="/js/github.js"></script>  
+  <a class="github-fork-ribbon left-bottom fixed" href="https://github.com/veniversum/git-visualizer" title="Fork me on GitHub">Fork me on GitHub</a>
+  <script src="/js/github.js"></script>
 </body>
 
 </html>

@@ -1,47 +1,38 @@
-var getContents = function (owner, repo, path) {
-  'use strict';
-  var tmp = null;
-  $.ajax({
-    async: false,
-    url: "https://api.github.com/repos/" + owner + "/" + repo + "/contents/" + path,
-    data: {
-      access_token: '<INSERT YOUR OWN>'
-    },
-    success: function (data) {
-      for (c in data) {
-        if (data[c].type == 'dir') {
-          data[c].children = getContents(owner, repo, data[c].path);
-        }
-      }
-      tmp = data;
-    }
-  });
-  return tmp;
-}
+var access_token = 'f1aff3072a385154ffe18aed3b893aa46ce8577c';
 
-var getRepo = function (owner, repo) {
-  if (owner == "atom" && repo == "atom")
-    return
-  return getContents(owner, repo, '');
-}
-
-
-var width = window.innerWidth * 0.98;
-var height = window.innerHeight * 0.98;
+var width = window.innerWidth;
+var height = window.innerHeight;
 var margin = 20;
 var pad = margin / 2;
-
 var root;
 var treeData = [];
+
+function getRepo() {
+  var owner = $('input#owner').val(),
+    repo = $('input#repo').val();
+  $.ajax({
+    url: "https://api.github.com/repos/" + owner + "/" + repo + "/commits",
+    data: {
+      access_token: access_token
+    },
+    success: function (data) {
+      var sha = data[0].sha,
+        url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token;
+      init(url);
+    }
+  });
+}
 
 var color = d3.scale.category20b();
 
 var force = d3.layout.force()
   .gravity(0.2)
-  .charge(-100)
+  .charge(-220)
   .size([width, height])
-  .linkStrength(1)
-  .distance(5)
+  .linkStrength(0.9)
+  .linkDistance(function (d) {
+    return d.source.type === 'tree' && d.target.type === 'tree' ? 1 : 10;
+  })
   .on("tick", tick);
 
 var outer = d3.select("body").append("svg")
@@ -51,7 +42,7 @@ var outer = d3.select("body").append("svg")
   .attr("height", height)
   .attr("pointer-events", "all");
 
-var svg = outer.append('svg:g')
+var svg = outer.append('svg:g');
 
 //Rescale function, called on zoom event
 function rescale() {
@@ -61,85 +52,62 @@ function rescale() {
     "translate(" + trans + ")" + " scale(" + scale + ")");
 }
 
+
 var link = svg.selectAll(".link"),
   node = svg.selectAll(".node");
 
-function init() {
-  if ($('input#owner').val() == "atom" && $('input#repo').val() == "atom") {
-    d3.json("/data/atom.json", function (error, json) {
-      if (error) return console.warn(error);
-      root = {
-        "name": "root",
-        "children": json
-      };
-      update();
+function init(url) {
+  treeData = [];
+  root = null;
+  d3.json(url, function (error, json) {
+    if (error) {
+      return console.warn(error);
+    }
+    json.tree.forEach(function (o) {
+      var indexSlash = o.path.lastIndexOf('/');
+      if (indexSlash < 0) {
+        o.parent = 'root';
+        o.filename = o.path;
+        o.name = o.path;
+      } else {
+        o.parent = o.path.substr(0, indexSlash);
+        o.filename = o.path.substr(indexSlash + 1);
+        o.name = o.path;
+      }
     });
-  } else if ($('input#owner').val() == "Microsoft" && $('input#repo').val() == "CNTK") {
-    d3.json("/data/CNTK.json", function (error, json) {
-      if (error) return console.warn(error);
-      root = {
-        "name": "root",
-        "children": json
-      };
-      update();
+    json.tree.unshift({
+      "path": "root",
+      "type": "tree",
+      "size": 0,
+      "parent": null,
+      "filename": "root",
+      "name": "root"
     });
-  } else {
-    /*var json = getRepo($('input#owner').val(), $('input#repo').val());
-    root = {
-      "name": "root",
-      "children": json
-    };
-    update();*/
-    d3.json("/data/meta.json", function (error, json) {
-      if (error) return console.warn(error);
-      console.log(json)
-      json.tree.forEach(function (o) {
-        var indexSlash = o.path.lastIndexOf('/');
-        if (indexSlash < 0) {
-          o.parent = 'root';
-          o.filename = o.path;
-          o.name = o.path;
-        } else {
-          o.parent = o.path.substr(0, indexSlash);
-          o.filename = o.path.substr(indexSlash + 1);
-          o.name = o.path;
-        }
-      });
-      json.tree.unshift({
-        "path": "root",
-        "type": "tree",
-        "size": 0,
-        "parent": null,
-        "filename": "root",
-        "name": "root"
-      });
-      var dataMap = json.tree.reduce(function (map, node) {
-        map[node.path] = node;
-        return map;
-      }, {});
-      console.log(dataMap);
-      json.tree.forEach(function (node) {
-        // add to parent
-        var parent = dataMap[node.parent];
-        if (parent) {
-          // create child array if it doesn't exist
-          (parent.children || (parent.children = []))
-          // add node to child array
-          .push(node);
-        } else {
-          // parent is null or missing
-          treeData.push(node);
-        }
-      });
-      root = treeData[0];
-      update();
+    var dataMap = json.tree.reduce(function (map, node) {
+      map[node.path] = node;
+      return map;
+    }, {});
+    json.tree.forEach(function (node) {
+      // add to parent
+      var parent = dataMap[node.parent];
+      if (parent) {
+        // create child array if it doesn't exist
+        (parent.children || (parent.children = []))
+        .push(node);
+      } else {
+        // parent is null or missing
+        treeData.push(node);
+      }
     });
-  }
+    root = treeData[0];
+    update();
+  });
+  //}
 }
 
 function update() {
   var nodes = flatten(root),
-  links = d3.layout.tree().links(nodes);
+    links = d3.layout.tree().links(nodes);
 
   // Restart the force layout.
   force
@@ -175,7 +143,7 @@ function update() {
   node = node.data(nodes, function (d) {
     return d.id;
   }).style("fill", function (d) {
-    return d.name == "root" ? '#f00' : d.type == "dir" ? "#777" : color(d.name.lastIndexOf('.') >= 0 ? d.name.substring(d.name.lastIndexOf('.')) : "Other");
+    return d.name === "root" ? '#f00' : d.type === "tree" ? "#ccc" : color(d.filename.lastIndexOf('.') >= 0 ? d.filename.substring(d.filename.lastIndexOf('.')) : "others");
   });
 
   // Exit any old nodes.
@@ -191,26 +159,46 @@ function update() {
       return d.y;
     })
     .attr("r", function (d) {
-      return d.name == "root" ? 10 : Math.log(d.size + 1) || 3;
+      return d.name === "root" ? 10 : d.type === 'tree' ? 7 : Math.log(d.size + 1) || 3;
     })
     .style("fill", function (d) {
-      return d.name == "root" ? '#f00' : d.type == "dir" ? "#777" : color(d.name.lastIndexOf('.') >= 0 ? d.name.substring(d.name.lastIndexOf('.')) : "others");
+      return d.name === "root" ? '#f00' : d.type === "tree" ? "#ccc" : color(d.filename.lastIndexOf('.') >= 0 ? d.filename.substring(d.filename.lastIndexOf('.')) : "others");
     })
     .on("click", click)
-    /*.on("mouseover", function (d, i) {
-      addTooltip(d, d3.select(this));
+    .on('mouseover', function (d) {
+      var ancestors = listAncestors(d);
+      link.style('stroke-width', function (l) {
+        if (ancestors.indexOf(l.target.name) >= 0)
+          return 4;
+        else
+          return 2;
+      });
+      link.style('stroke', function (l) {
+        if (ancestors.indexOf(l.target.name) >= 0)
+          return "#ff8080";
+        else
+          return '#9ecae1';
+      });
+      node.style('stroke', function (n) {
+        if (ancestors.indexOf(n.name) >= 0)
+          return "#ff8080";
+        else
+          return '#3182bd';
+      });
     })
-    .on("mouseout", function (d, i) {
-      d3.select("#tooltip").remove();
-    })*/
-    .call(force.drag);
+    .on('mouseout', function () {
+      link.style('stroke-width', 2);
+      link.style('stroke', '#9ecae1');
+      node.style('stroke', '#3182bd');
+    });
 
+  //Update legend
   var legend = outer.selectAll(".legend")
     .data(color.domain())
     .enter().append("g")
     .attr("class", "legend")
     .attr("transform", function (d, i) {
-      return "translate(0," + i * 20 + ")";
+      return "translate(-5," + (i * 20 + 5) + ")";
     });
 
   legend.append("rect")
@@ -228,22 +216,8 @@ function update() {
       return d;
     });
 
-  /*svg.append("g")
-    .attr("class", "legend")
-    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
-  .append("rect")
-    .attr("x", width - 18)
-    .attr("width", 18)
-    .attr("height", 18)
-    .style("fill", "#f00")
-    .append("text")
-    .attr("x", width - 24)
-    .attr("y", 9)
-    .attr("dy", ".35em")
-    .style("text-anchor", "end")
-    .text("ROOT");*/
   var styleTooltip = function (name) {
-    return "<p class='description'>" + name + "</p>";
+    return "<p class='filename'>" + name + "</p>";
   };
 
 
@@ -255,7 +229,7 @@ function update() {
         html: true,
         title: function () {
           var d = this.__data__;
-          return styleTooltip(d.name)
+          return styleTooltip(d.filename);
         }
       });
     });
@@ -283,15 +257,6 @@ function tick() {
     });
 }
 
-// Color leaf nodes orange, and packages white or blue.
-/*function color(d) {
-  return d.name=="root" ? 
-          "#ff0000" : 
-          d.type=="dir" ? "#777777": d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
-}*/
-
-
-
 // Toggle children on click.
 function click(d) {
   //if (!d3.event.defaultPrevented) {
@@ -306,17 +271,20 @@ function click(d) {
   // }
 }
 
-function mouseover(d) {
-  d.append("text")
-    .text(function (d) {
-      return d.x;
-    })
-    .attr("x", function (d) {
-      return x(d.x);
-    })
-    .attr("y", function (d) {
-      return y(d.y);
+function listAncestors(d) {
+  var ancestors = [];
+  ancestors.push(d.name);
+  var cur = d.parent;
+  ancestors.push(cur);
+  while (cur != null) {
+    node.each(function (n) {
+      if (n.name === cur) {
+        cur = n.parent;
+        ancestors.push(cur);
+      }
     });
+    return ancestors;
+  }
 }
 
 // Returns a list of all nodes under the root.
@@ -332,32 +300,4 @@ function flatten(root) {
 
   recurse(root);
   return nodes;
-}
-
-// Generates a tooltip for a SVG circle element based on its ID
-function addTooltip(d, circle) {
-  var x = parseFloat(circle.attr("cx"));
-  var y = parseFloat(circle.attr("cy"));
-  var r = parseFloat(circle.attr("r"));
-
-  var tooltip = d3.select("svg")
-    .append("text")
-    .text(d.name)
-    .attr("x", x)
-    .attr("y", y)
-    .attr("dy", -r * 2)
-    .attr("id", "tooltip");
-
-  var offset = tooltip.node().getBBox().width / 2;
-
-  if ((x - offset) < 0) {
-    tooltip.attr("text-anchor", "start");
-    tooltip.attr("dx", -r);
-  } else if ((x + offset) > (width - margin)) {
-    tooltip.attr("text-anchor", "end");
-    tooltip.attr("dx", r);
-  } else {
-    tooltip.attr("text-anchor", "middle");
-    tooltip.attr("dx", 0);
-  }
 }
