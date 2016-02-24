@@ -8,9 +8,11 @@ var root;
 var treeData = [];
 
 function checkQuery() {
-  if (fromQuery('owner') && fromQuery('repo')) {
-    $('input#owner').val(fromQuery('owner'));
-    $('input#repo').val(fromQuery('repo'));
+  var owner = fromQuery('owner');
+  var repo = fromQuery('repo');
+  if (owner && repo) {
+    $('input#owner').val(owner);
+    $('input#repo').val(repo);
     getRepo();
   }
 }
@@ -28,7 +30,10 @@ function fromQuery(value) {
 
 function getRepo() {
   var owner = $('input#owner').val(),
-    repo = $('input#repo').val();
+      repo = $('input#repo').val(),
+      queryString = 'owner=' + owner + '&repo=' + repo;
+  window.history.pushState({}, '', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString);
+
   $.ajax({
     url: "https://api.github.com/repos/" + owner + "/" + repo + "/commits",
     data: {
