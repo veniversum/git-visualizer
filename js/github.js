@@ -47,6 +47,9 @@ function getRepo() {
       var sha = data[0].sha,
         url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token[Math.floor(Math.random() * access_token.length)];
       init(url);
+    },
+    error: function (request, status, error) {
+      alert('Error: ' + request.statusText);    
     }
   });
 }
