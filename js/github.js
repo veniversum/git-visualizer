@@ -7,9 +7,20 @@ var pad = margin / 2;
 var root;
 var treeData = [];
 
+function fromQuery(value) {
+  var qs = window.location.search;
+  var re = new RegExp(value + '=([^&]*)');
+  var match = re.exec(qs);
+  if (match) {
+    return match[1];
+  } else {
+    return null;
+  }
+}
+
 function getRepo() {
-  var owner = $('input#owner').val(),
-    repo = $('input#repo').val();
+  var owner = fromQuery('owner') || $('input#owner').val(),
+      repo = fromQuery('repo') || $('input#repo').val();
   $.ajax({
     url: "https://api.github.com/repos/" + owner + "/" + repo + "/commits",
     data: {
