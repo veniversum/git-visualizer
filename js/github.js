@@ -7,6 +7,10 @@ var pad = margin / 2;
 var root;
 var treeData = [];
 
+function checkQuery() {
+  if (fromQuery('owner') && fromQuery('repo')) getRepo();
+}
+
 function fromQuery(value) {
   var qs = window.location.search;
   var re = new RegExp(value + '=([^&]*)');
