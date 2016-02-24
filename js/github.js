@@ -1,4 +1,4 @@
-var access_token = 'f1aff3072a385154ffe18aed3b893aa46ce8577c';
+var access_token = ['f1aff3072a385154ffe18aed3b893aa46ce8577c','2e71ec1017dda2220ccba0f6922ecefd9ea44ac7','bfaeb43c92d3e2f534745a6df977f68b64dc7c55'];
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -13,7 +13,7 @@ function getRepo() {
   $.ajax({
     url: "https://api.github.com/repos/" + owner + "/" + repo + "/commits",
     data: {
-      access_token: access_token
+      access_token: access_token[Math.floor(Math.random()*access_token.length)]
     },
     success: function (data) {
       $('header').show();
@@ -21,7 +21,7 @@ function getRepo() {
       $('header p').remove();
       $('img#logo').attr('src', 'images/hex-loader.gif')
       var sha = data[0].sha,
-        url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token;
+        url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token[Math.floor(Math.random()*access_token.length)];
       init(url);
     }
   });
