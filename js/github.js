@@ -30,8 +30,8 @@ function fromQuery(value) {
 
 function getRepo() {
   var owner = $('input#owner').val(),
-      repo = $('input#repo').val(),
-      queryString = 'owner=' + owner + '&repo=' + repo;
+    repo = $('input#repo').val(),
+    queryString = 'owner=' + owner + '&repo=' + repo;
   window.history.pushState({}, '', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString);
 
   $.ajax({
@@ -49,7 +49,7 @@ function getRepo() {
       init(url);
     },
     error: function (request, status, error) {
-      alert('Error: ' + request.statusText);    
+      alert('Error: ' + request.statusText);
     }
   });
 }
@@ -198,7 +198,7 @@ function update() {
     })
     .on("click", click)
     .on('mouseover', function (d) {
-      var ancestors = listAncestors(d);
+      var ancestors = d.path;
       link.style('stroke-width', function (l) {
         if (ancestors && ancestors.indexOf(l.target.name) >= 0)
           return 4;
@@ -303,7 +303,7 @@ function click(d) {
   // }
 }
 
-function listAncestors(d) {
+/*function listAncestors(d) {
   var ancestors = [];
   ancestors.push(d.name);
   var cur = d.parent;
@@ -317,7 +317,7 @@ function listAncestors(d) {
     });
     return ancestors;
   }
-}
+}*/
 
 // Returns a list of all nodes under the root.
 function flatten(root) {

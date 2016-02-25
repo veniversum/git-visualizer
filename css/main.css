@@ -41,6 +41,10 @@ header p {
   margin: 1.5em 0 0 0;
 }
 
+p.filename {
+  margin: 1px;
+}
+
 #prompt {
   position: absolute;
   top: 0;
@@ -100,11 +104,12 @@ b {
 }
 
 .tipsy-inner {
-  padding: 0px;
+  padding: 1px;
 }
 
 .tipsy {
-  font-size: 12px;
+  font-size: 14px;
+  pointer-events: none;
 }
 
 
