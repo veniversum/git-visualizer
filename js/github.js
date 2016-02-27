@@ -10,10 +10,12 @@ var treeData = [];
 function checkQuery() {
   var owner = fromQuery('owner');
   var repo = fromQuery('repo');
+  var branch = fromQuery('branch');
+
   if (owner && repo) {
     $('input#owner').val(owner);
     $('input#repo').val(repo);
-    getRepo();
+    getRepo(branch);
   }
 }
 
@@ -28,14 +30,14 @@ function fromQuery(value) {
   }
 }
 
-function getRepo() {
+function getRepo(branch) {
   var owner = $('input#owner').val(),
     repo = $('input#repo').val(),
-    queryString = 'owner=' + owner + '&repo=' + repo;
+    queryString = 'owner=' + owner + '&repo=' + repo + (branch != null ? '&branch=' + branch : '');
   window.history.pushState({}, '', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString);
 
   $.ajax({
-    url: "https://api.github.com/repos/" + owner + "/" + repo + "/commits",
+    url: "https://api.github.com/repos/" + owner + "/" + repo + (branch != null ? "/branches/" + branch : "/commits"),
     data: {
       access_token: access_token[Math.floor(Math.random() * access_token.length)]
     },
@@ -44,7 +46,7 @@ function getRepo() {
       $('form.start').removeClass('start');
       $('header p').remove();
       $('img#logo').attr('src', 'images/hex-loader.gif')
-      var sha = data[0].sha,
+      var sha = branch ? data.commit.sha : data[0].sha,
         url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token[Math.floor(Math.random() * access_token.length)];
       init(url);
     },
