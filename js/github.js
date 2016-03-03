@@ -202,13 +202,13 @@ function update() {
     .on('mouseover', function (d) {
       var ancestors = d.path;
       link.style('stroke-width', function (l) {
-        if (ancestors && ancestors.indexOf(l.target.name) >= 0)
+        if (ancestors && d.name == l.target.name || ancestors.indexOf(l.target.name + '/') >= 0)
           return 4;
         else
           return 2;
       });
       link.style('stroke', function (l) {
-        if (ancestors && ancestors.indexOf(l.target.name) >= 0)
+        if (ancestors && d.name == l.target.name ||  ancestors.indexOf(l.target.name + '/') >= 0)
           return "#ff8080";
         else
           return '#9ecae1';
