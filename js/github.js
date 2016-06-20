@@ -7,11 +7,16 @@ var pad = margin / 2;
 var root;
 var treeData = [];
 var highlighted = [];
+var exclude;
 
 function checkQuery() {
   var owner = fromQuery('owner');
   var repo = fromQuery('repo');
   var branch = fromQuery('branch');
+  exclude = fromQuery('exclude');
+  if (exclude){
+    exclude = exclude.split(',');
+  }
 
   if (owner && repo) {
     $('input#owner').val(owner);
@@ -34,7 +39,7 @@ function fromQuery(value) {
 function getRepo(branch) {
   var owner = $('input#owner').val(),
     repo = $('input#repo').val(),
-    queryString = 'owner=' + owner + '&repo=' + repo + (branch ? '&branch=' + branch : '');
+    queryString = 'owner=' + owner + '&repo=' + repo + (branch ? '&branch=' + branch : '') + (exclude ? '&exclude=' + exclude.join() : '');
   window.history.pushState({}, '', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString);
 
   $.ajax({
@@ -52,7 +57,7 @@ function getRepo(branch) {
       init(url);
     },
     error: function (request, status, error) {
-      alert('Error: ' + request.statusText);
+      alert('Error loading repo: ' + request.statusText);
     }
   });
 }
@@ -126,9 +131,11 @@ function init(url) {
       // add to parent
       var parent = dataMap[node.parent];
       if (parent) {
+        if (exclude && exclude.indexOf(parent.path) > -1){
+          (parent._children || (parent._children = [])).push(node);}
         // create child array if it doesn't exist
-        (parent.children || (parent.children = []))
-        .push(node);
+        else
+          (parent.children || (parent.children = [])).push(node);
       } else {
         // parent is null or missing
         treeData.push(node);
@@ -136,8 +143,8 @@ function init(url) {
     });
     root = treeData[0];
     update();
+    exclude = null;
   });
-  //}
 }
 
 function update() {
@@ -346,8 +353,15 @@ function flatten(root) {
 
   function recurse(node) {
     if (node.children) node.children.forEach(recurse);
+    else if (node._children) node._children.forEach(recurse_exclude);
     if (!node.id) node.id = ++i;
     nodes.push(node);
+  }
+  
+  function recurse_exclude(node) {
+    if (node.children) node.children.forEach(recurse_exclude);
+    else if (node._children) node._children.forEach(recurse_exclude);
+    if (!node.id) node.id = ++i;
   }
 
   recurse(root);
