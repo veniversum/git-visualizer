@@ -6,6 +6,7 @@ var margin = 20;
 var pad = margin / 2;
 var root;
 var treeData = [];
+var highlighted = [];
 
 function checkQuery() {
   var owner = fromQuery('owner');
@@ -33,11 +34,11 @@ function fromQuery(value) {
 function getRepo(branch) {
   var owner = $('input#owner').val(),
     repo = $('input#repo').val(),
-    queryString = 'owner=' + owner + '&repo=' + repo + (branch != null ? '&branch=' + branch : '');
+    queryString = 'owner=' + owner + '&repo=' + repo + (branch ? '&branch=' + branch : '');
   window.history.pushState({}, '', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString);
 
   $.ajax({
-    url: "https://api.github.com/repos/" + owner + "/" + repo + (branch != null ? "/branches/" + branch : "/commits"),
+    url: "https://api.github.com/repos/" + owner + "/" + repo + (branch ? "/branches/" + branch : "/commits"),
     data: {
       access_token: access_token[Math.floor(Math.random() * access_token.length)]
     },
@@ -45,7 +46,7 @@ function getRepo(branch) {
       $('header').show();
       $('form.start').removeClass('start');
       $('header p').remove();
-      $('img#logo').attr('src', 'images/hex-loader.gif')
+      $('img#logo').attr('src', 'images/hex-loader.gif');
       var sha = branch ? data.commit.sha : data[0].sha,
         url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token[Math.floor(Math.random() * access_token.length)];
       init(url);
@@ -214,13 +215,30 @@ function update() {
           return '#9ecae1';
       });
       node.style('stroke', function (n) {
-        if (ancestors && ancestors.indexOf(n.name) >= 0)
+        if (ancestors && ancestors.indexOf(n.name) >= 0 || n.name == "root")
           return "#ff8080";
         else
           return '#3182bd';
       });
+      link.each(function(l){
+        if (ancestors && d.name == l.target.name ||  ancestors.indexOf(l.target.name + '/') >= 0) {
+          this.parentNode.appendChild(this);
+          highlighted.push(this);
+        }
+      });
+      node.each(function(n){
+        if (ancestors && ancestors.indexOf(n.name) >= 0 || n.name == "root")
+          this.parentNode.appendChild(this);
+      });
     })
     .on('mouseout', function () {
+      while (highlighted.length > 0) {
+        var l = highlighted.pop();
+        var firstChild = l.parentNode.firstChild; 
+        if (firstChild) { 
+            l.parentNode.insertBefore(l, firstChild); 
+        } 
+      }
       link.style('stroke-width', 2);
       link.style('stroke', '#9ecae1');
       node.style('stroke', '#3182bd');
