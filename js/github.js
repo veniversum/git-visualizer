@@ -41,6 +41,7 @@ function getRepo(branch) {
     repo = $('input#repo').val(),
     queryString = 'owner=' + owner + '&repo=' + repo + (branch ? '&branch=' + branch : '') + (exclude ? '&exclude=' + exclude.join() : '');
   window.history.pushState({}, '', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString);
+  $('img#logo').attr('src', 'images/hex-loader.gif');
 
   $.ajax({
     url: "https://api.github.com/repos/" + owner + "/" + repo + (branch ? "/branches/" + branch : "/commits"),
@@ -51,12 +52,14 @@ function getRepo(branch) {
       $('header').show();
       $('form.start').removeClass('start');
       $('header p').remove();
-      $('img#logo').attr('src', 'images/hex-loader.gif');
+      $('footer').addClass('shift');
+      $('#prompt').addClass('fade');
       var sha = branch ? data.commit.sha : data[0].sha,
         url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/" + sha + "?recursive=1&access_token=" + access_token[Math.floor(Math.random() * access_token.length)];
       init(url);
     },
     error: function (request, status, error) {
+      $('img#logo').attr('src', 'images/logo.png');
       alert('Error loading repo: ' + request.statusText);
     }
   });

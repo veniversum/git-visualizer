@@ -41,6 +41,28 @@ header p {
   margin: 1.5em 0 0 0;
 }
 
+footer {
+  position: fixed;
+  bottom: 1.5em;
+  width: 100%;
+  text-align: center;
+  transition: bottom 2s;
+}
+
+footer.shift {
+  bottom: 0.1em;
+}
+
+footer a {
+  color: #777;
+  text-decoration: none;
+  text-shadow: #fff 0px 0px 3px,   #fff 0px 0px 3px,   #fff 0px 0px 3px,
+             #fff 0px 0px 3px,   #fff 0px 0px 3px,   #fff 0px 0px 3px;
+  font-weight: 100;
+  font-size: 0.8em;
+  font-variant: small-caps;
+}
+
 p.filename {
   margin: 1px;
 }
@@ -48,7 +70,16 @@ p.filename {
 #prompt {
   position: absolute;
   top: 0;
-  margin: 10px
+  margin: 10px;
+  transition: opacity 0.2s;
+}
+
+#prompt.fade {
+  opacity: 0.5;
+}
+
+#prompt.fade:hover {
+  opacity: 1;
 }
 
 form.start {
@@ -112,6 +143,26 @@ b {
   pointer-events: none;
 }
 
+.flat-button {
+  position: relative;
+  vertical-align: top;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #27ae60;
+  padding-top: 3px;
+  border: 0;
+  border-bottom: 2px solid #219d55;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 -2px #219d55;
+  box-shadow: inset 0 -2px #219d55;
+}
+.flat-button:active {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
 
 /*!
  * "Fork me on GitHub" CSS ribbon v0.2.0 | MIT License
