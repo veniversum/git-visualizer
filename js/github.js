@@ -37,8 +37,8 @@ function fromQuery(value) {
 }
 
 function getRepo(branch) {
-  var owner = $('input#owner').val(),
-    repo = $('input#repo').val(),
+  var owner = $('input#owner').val().trim(),
+      repo = $('input#repo').val().trim(),
     queryString = 'owner=' + owner + '&repo=' + repo + (branch ? '&branch=' + branch : '') + (exclude ? '&exclude=' + exclude.join() : '');
   window.history.pushState({}, '', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString);
   $('img#logo').attr('src', 'images/hex-loader.gif');
